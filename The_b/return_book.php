@@ -78,6 +78,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
+// Get the list of current borrowings
+$borrowingsQuery = "SELECT b.BorrowingID, b.BookID, b.UserID, b.DueDate, u.FirstName, u.LastName, bk.Title
+                    FROM Borrowings b
+                    JOIN Users u ON b.UserID = u.UserID
+                    JOIN Books bk ON b.BookID = bk.BookID
+                    WHERE b.DateReturned IS NULL";
+$borrowingsResult = mysqli_query($conn, $borrowingsQuery);
+
 // Close the connection
 mysqli_close($conn);
 ?>
@@ -92,9 +100,28 @@ mysqli_close($conn);
             margin: 0;
             padding: 0;
         }
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .navbar-right {
+            float: right;
+        }
         .container {
             width: 80%;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -111,7 +138,7 @@ mysqli_close($conn);
         label {
             margin: 10px 0 5px;
         }
-        input {
+        input, textarea, select {
             margin: 5px 0 15px;
             padding: 8px;
             width: 100%;
@@ -135,9 +162,52 @@ mysqli_close($conn);
             text-align: center;
             color: red;
         }
+        .current-borrowings {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="index.php">Home</a>
+        <div class="navbar-right">
+            <a href="add_book.php">Add Book</a>
+            <a href="borrow_book.php">Borrow Book</a>
+            <a href="return_book.php">Return Book</a>
+            <a href="pay_fine.php">Pay Fine</a>
+            <a href="review_book.php">Review Book</a>
+        </div>
+    </div>
     <div class="container">
         <h2>Return Book</h2>
         <?php if ($successMessage): ?>
@@ -154,6 +224,39 @@ mysqli_close($conn);
 
             <input type="submit" value="Return Book">
         </form>
+        <div class="current-borrowings">
+            <h3>Current Borrowings</h3>
+            <table>
+                <tr>
+                    <th>Borrowing ID</th>
+                    <th>Book Title</th>
+                    <th>User</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+                <?php
+                if ($borrowingsResult && mysqli_num_rows($borrowingsResult) > 0) {
+                    while ($borrowing = mysqli_fetch_assoc($borrowingsResult)) {
+                        $dueDate = new DateTime($borrowing['DueDate']);
+                        $currentDate = new DateTime();
+                        $status = $currentDate > $dueDate ? 'Late' : 'Not Late';
+                        echo "<tr>
+                                <td>" . htmlspecialchars($borrowing['BorrowingID']) . "</td>
+                                <td>" . htmlspecialchars($borrowing['Title']) . "</td>
+                                <td>" . htmlspecialchars($borrowing['FirstName']) . " " . htmlspecialchars($borrowing['LastName']) . "</td>
+                                <td>" . htmlspecialchars($borrowing['DueDate']) . "</td>
+                                <td>" . $status . "</td>
+                              </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='5'>No current borrowings</td></tr>";
+                }
+                ?>
+            </table>
+        </div>
+        <div class="button-container">
+            <button onclick="window.location.href='index.php'">Return to Home Page</button>
+        </div>
     </div>
 </body>
 </html>

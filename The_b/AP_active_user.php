@@ -55,6 +55,22 @@ $result = mysqli_query($conn, $sql);
         th {
             background-color: #f2f2f2;
         }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -86,6 +102,9 @@ $result = mysqli_query($conn, $sql);
             }
             ?>
         </table>
+        <div class="button-container">
+            <button onclick="window.location.href='index.php'">Back to Main Page</button>
+        </div>
     </div>
 </body>
 </html>

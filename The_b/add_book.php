@@ -51,9 +51,28 @@ mysqli_close($conn);
             margin: 0;
             padding: 0;
         }
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .navbar-right {
+            float: right;
+        }
         .container {
             width: 80%;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -94,9 +113,35 @@ mysqli_close($conn);
             text-align: center;
             color: red;
         }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="index.php">Home</a>
+        <div class="navbar-right">
+            <a href="add_book.php">Add Book</a>
+            <a href="borrow_book.php">Borrow Book</a>
+            <a href="return_book.php">Return Book</a>
+            <a href="pay_fine.php">Pay Fine</a>
+            <a href="review_book.php">Review Book</a>
+        </div>
+    </div>
     <div class="container">
         <h2>Add New Book</h2>
         <?php if ($successMessage): ?>
@@ -125,6 +170,9 @@ mysqli_close($conn);
 
             <input type="submit" value="Add Book">
         </form>
+        <div class="button-container">
+            <button onclick="window.location.href='index.php'">Return to Home Page</button>
+        </div>
     </div>
 </body>
 </html>
